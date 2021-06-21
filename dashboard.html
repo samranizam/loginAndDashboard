@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>dashboard</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+  <body>
+    <h1>Welcome to the Employee Dashboard!!</h1>
+    <input
+      id="search-input"
+      type="text"
+      placeholder="Search employee by ID"
+      onkeyup="searchFun()"
+    />
+    <table class="table table-striped">
+      <tr class="bg-info">
+        <th>Employee ID</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>E-mail ID</th>
+      </tr>
+      <tbody id="myTable"></tbody>
+    </table>
+    <h2>Enter details below for adding New Members to the Dashboard</h2>
+    <input id="newID" type="text" placeholder="Enter Employee ID" />
+    <input id="newNAME" type="text" placeholder="Enter Employee First Name" />
+    <input id="newNAME2" type="text" placeholder="Enter Employee Last Name" />
+    <input id="newemail" type="text" placeholder="Enter Employee E-mail ID" />
+    <button class="newbtn" onclick="addRow();">Add Employee</button>
+    <script>
+      function addRow() {
+        var fID = document.getElementById("newID").value;
+        var fname = document.getElementById("newNAME").value;
+        var fname2 = document.getElementById("newNAME2").value;
+        var femail = document.getElementById("newemail").value;
+        var table = document.getElementsByTagName("table")[0];
+        var newRow = table.insertRow(table.length);
+        var cell = newRow.insertCell(0);
+        var cel2 = newRow.insertCell(1);
+        var cel3 = newRow.insertCell(2);
+        var cel4 = newRow.insertCell(3);
+        cell.innerHTML = fID;
+        cel2.innerHTML = fname;
+        cel3.innerHTML = fname2;
+        cel4.innerHTML = femail;
+      }
+      const searchFun = () => {
+        let filter = document
+          .getElementById("search-input")
+          .value.toUpperCase();
+        let table = document.getElementById("myTable");
+        let tr = table.getElementsByTagName("tr");
+        for (var i = 0; i < tr.length; i++) {
+          let td = tr[i].getElementsByTagName("td")[0];
+          if (td) {
+            let textvalue = td.textContent || td.innerHTML;
+            if (textvalue.toUpperCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+            } else {
+              tr[i].style.display = "none";
+            }
+          }
+        }
+      };
+      var myArray = [];
+      buildTable(myArray);
+
+      async function fetchdata() {
+        const response = await fetch("https://reqres.in/api/users?page=1");
+        myArray = await response.json();
+        buildTable(myArray.data);
+        console.log(myArray.data);
+      }
+      fetchdata();
+      function buildTable(data) {
+        console.log(data);
+        var table = document.getElementById("myTable");
+        for (var i = 0; i < data.length; i++) {
+          var row = `<tr>
+            <td>${data[i].id}</td>
+            <td>${data[i].first_name}</td>
+            <td>${data[i].last_name}</td>
+            <td>${data[i].email}</td>
+            </tr>`;
+          table.innerHTML += row;
+        }
+      }
+    </script>
+  </body>
+</html>
